@@ -62,5 +62,51 @@ void main() {
 
       await db.close();
     });
+
+    test('estado, edición y eliminación se conservan tras reiniciar', () async {
+      var db = AppDatabase(NativeDatabase(archivo));
+      var repo = TareasRepository(db);
+      final id1 = await repo.crear('Tarea 1');
+      final id2 = await repo.crear('Tarea 2');
+      final id3 = await repo.crear('Tarea 3');
+      await repo.cambiarEstado(id1, true); // P2
+      await repo.actualizarTitulo(id2, '  Tarea editada '); // P3
+      await repo.eliminar(id3); // P4
+      await db.close();
+
+      db = AppDatabase(NativeDatabase(archivo));
+      repo = TareasRepository(db);
+      final tareas = await repo.observarTareas().first;
+
+      expect(tareas.length, 2);
+      expect(tareas[0].completada, isTrue);
+      expect(tareas[1].titulo, 'Tarea editada');
+      expect(tareas.any((t) => t.id == id3), isFalse);
+
+      await db.close();
+    });
+
+    test('no permite editar un título vacío ni cambia el anterior', () async {
+      final db = AppDatabase(NativeDatabase.memory());
+      final repo = TareasRepository(db);
+      final id = await repo.crear('Original');
+
+      expect(() => repo.actualizarTitulo(id, '  '), throwsArgumentError);
+      expect((await repo.observarTareas().first).single.titulo, 'Original');
+
+      await db.close();
+    });
+
+    test('desmarcar una tarea la regresa a pendiente', () async {
+      final db = AppDatabase(NativeDatabase.memory());
+      final repo = TareasRepository(db);
+      final id = await repo.crear('Tarea');
+
+      await repo.cambiarEstado(id, true);
+      await repo.cambiarEstado(id, false);
+
+      expect((await repo.observarTareas().first).single.completada, isFalse);
+      await db.close();
+    });
   });
 }

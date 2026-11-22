@@ -24,4 +24,25 @@ class TareasRepository {
         .into(_db.tareas)
         .insert(TareasCompanion.insert(titulo: titulo.trim()));
   }
+
+  // UPDATE del título
+  Future<void> actualizarTitulo(int id, String titulo) async {
+    final error = validarTitulo(titulo);
+    if (error != null) throw ArgumentError(error);
+    await (_db.update(_db.tareas)..where((t) => t.id.equals(id))).write(
+      TareasCompanion(titulo: Value(titulo.trim())),
+    );
+  }
+
+  // UPDATE del estado
+  Future<void> cambiarEstado(int id, bool completada) async {
+    await (_db.update(_db.tareas)..where((t) => t.id.equals(id))).write(
+      TareasCompanion(completada: Value(completada)),
+    );
+  }
+
+  // DELETE por id
+  Future<void> eliminar(int id) async {
+    await (_db.delete(_db.tareas)..where((t) => t.id.equals(id))).go();
+  }
 }
