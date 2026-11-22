@@ -4,9 +4,6 @@ Práctica de Programación de Dispositivos Móviles (UAA, ISC, 7.º semestre): g
 persistencia local en SQLite, sin servidor, sin MySQL y sin conexión a internet. Un solo proyecto
 Flutter pensado para Android, iOS, Windows, Linux, macOS y web.
 
-> Estado: **Etapa 1 – preparación y diseño**. La persistencia aún no está implementada; el
-> proyecto es la base entregada por el profesor, que compila y pasa su prueba inicial.
-
 ## Tecnología de persistencia elegida: Drift + drift_flutter
 
 | Paquete | Para qué se usa |
