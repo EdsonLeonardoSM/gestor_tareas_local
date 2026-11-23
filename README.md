@@ -51,4 +51,54 @@ flutter test
 flutter run -d linux     # o: flutter run -d chrome
 ```
 
+El código generado (`lib/data/app_database.g.dart`) ya está en el repositorio. Si se cambia la
+tabla, se regenera con:
+
+```bash
+dart run build_runner build
+```
+
+## Web
+
+SQLite en el navegador necesita WebAssembly, por eso `web/` incluye:
+
+- `sqlite3.wasm`: release `sqlite3-3.5.2` de https://github.com/simolus3/sqlite3.dart/releases
+  (misma versión que el paquete `sqlite3` de `pubspec.lock`).
+- `drift_worker.js`: tomado del paquete `drift` 2.35.4 (misma versión que `pubspec.lock`).
+
+Si se actualiza Drift o sqlite3, hay que reemplazar estos archivos por los de la nueva versión.
+
+## Pruebas automatizadas
+
+`flutter test` ejecuta 9 pruebas:
+
+- `validarTitulo`: rechaza vacío, solo espacios y títulos muy largos; acepta un título normal.
+- Repositorio: no guarda ni edita con un título vacío; las tareas, el estado, la edición y la
+  eliminación se conservan al cerrar y reabrir un archivo SQLite; desmarcar regresa a pendiente.
+- Interfaz: la pantalla inicial se muestra sin errores.
+
+## Plataformas verificadas
+
+| Plataforma | Estado |
+|---|---|
+| Web (Chrome) | Verificada: `flutter build web` y pruebas P1–P6 en Chrome (sin interfaz gráfica). |
+| Linux | La app compila y abre, crea el archivo `gestor_tareas.sqlite`; P1–P5 cubiertas por las pruebas automatizadas. |
+| Android, iOS, Windows, macOS | Solo previstas (el código es el mismo, no se probaron). |
+
+Resultado de las pruebas de la consigna en web:
+
+| Prueba | Resultado |
+|---|---|
+| P1 Agregar 3 tareas y recargar | Permanecen |
+| P2 Marcar completada y recargar | Se conserva el estado |
+| P3 Cambiar el título y recargar | Aparece el nuevo título |
+| P4 Eliminar y recargar | No reaparece |
+| P5 Título vacío o solo espacios | No se registra; se muestra el error |
+| P6 Recargar la página | Los datos permanecen |
+
+Limitaciones: en web se probó recargar la página, no cerrar y abrir el navegador. En esa prueba
+Drift usó `sharedIndexedDb` porque el servidor local no envía las cabeceras que habilitan
+`SharedArrayBuffer`; funciona igual. El límite de 100 caracteres del título lo valida el código,
+no la base de datos.
+
 Los datos son locales a cada instalación; en web quedan ligados al origen y perfil del navegador.
