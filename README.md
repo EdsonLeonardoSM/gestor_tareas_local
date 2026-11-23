@@ -82,7 +82,7 @@ Si se actualiza Drift o sqlite3, hay que reemplazar estos archivos por los de la
 | Plataforma | Estado |
 |---|---|
 | Web (Chrome) | Verificada: `flutter build web` y pruebas P1–P6 en Chrome (sin interfaz gráfica). |
-| Linux | La app compila y abre, crea el archivo `gestor_tareas.sqlite`; P1–P5 cubiertas por las pruebas automatizadas. |
+| Linux | Verificada: la app compila y abre, crea el archivo `gestor_tareas.sqlite` y se probó a mano agregar, cerrar y reabrir; P1–P5 además cubiertas por las pruebas automatizadas. |
 | Android, iOS, Windows, macOS | Solo previstas (el código es el mismo, no se probaron). |
 
 Resultado de las pruebas de la consigna en web:
