@@ -7,7 +7,16 @@ import 'screens/tareas_page.dart';
 
 void main() {
   // Archivo SQLite persistente (en el directorio de datos de la app).
-  final db = AppDatabase(driftDatabase(name: 'gestor_tareas'));
+  final db = AppDatabase(
+    driftDatabase(
+      name: 'gestor_tareas',
+      // Archivos de web/ (solo se usan en el navegador).
+      web: DriftWebOptions(
+        sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+        driftWorker: Uri.parse('drift_worker.js'),
+      ),
+    ),
+  );
   runApp(GestorTareasApp(repositorio: TareasRepository(db)));
 }
 
